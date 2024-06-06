@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 
-pth = "../data/uberon/ext.obo"
+pth = "data/input/uberon/ext.obo"
 with open(pth, 'r') as f: 
     data = f.read()
 data = data.split('[Term]\n')[1:-1]
@@ -42,6 +42,6 @@ df_is_a.loc[:, 'is_a'] = [str(int(x.split(' {')[0].split(':')[1])) for x in df_i
 df_rels.loc[:, 'id'] = [str(int(x.split(':')[1])) for x in df_rels.get(['id']).values.reshape(-1)]
 df_rels.loc[:, 'relation_id'] = [str(int(x.split(':')[1])) for x in df_rels.get(['relation_id']).values.reshape(-1)]
 
-df_terms.to_csv('../data/uberon/uberon_terms.csv', index=False)
-df_rels.to_csv('../data/uberon/uberon_rels.csv', index=False)
-df_is_a.to_csv('../data/uberon/uberon_is_a.csv', index=False)
+df_terms.to_csv('data/output/uberon/uberon_terms.csv', index=False)
+df_rels.to_csv('data/output/uberon/uberon_rels.csv', index=False)
+df_is_a.to_csv('data/output/uberon/uberon_is_a.csv', index=False)

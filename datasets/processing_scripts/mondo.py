@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from mondo_obo_parser import OBOReader
 
-pth = "../data/mondo/mondo.obo"
+pth = "data/input/mondo/mondo.obo"
 data = [*iter(OBOReader(pth))]
 mondo_terms = pd.DataFrame([{'id':x.item_id, 
                              'name':x.name, 
@@ -53,8 +53,8 @@ for x in mondo_def.itertuples():
 mondo_def = mondo_def.dropna()
 mondo_terms = mondo_terms.drop('definition', axis=1)
 
-mondo_terms.to_csv('../data/mondo/mondo_terms.csv', index=False)
-mondo_parents.to_csv('../data/mondo/mondo_parents.csv', index=False)
-mondo_xrefs.to_csv('../data/mondo/mondo_references.csv', index=False)
-mondo_subsets.to_csv('../data/mondo/mondo_subsets.csv', index=False)
-mondo_def.to_csv('../data/mondo/mondo_definitions.csv', index=False)
+mondo_terms.to_csv('data/output/mondo/mondo_terms.csv', index=False)
+mondo_parents.to_csv('data/output/mondo/mondo_parents.csv', index=False)
+mondo_xrefs.to_csv('data/output/mondo/mondo_references.csv', index=False)
+mondo_subsets.to_csv('data/output/mondo/mondo_subsets.csv', index=False)
+mondo_def.to_csv('data/output/mondo/mondo_definitions.csv', index=False)

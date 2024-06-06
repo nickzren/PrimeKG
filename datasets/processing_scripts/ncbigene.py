@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 from goatools.anno.genetogo_reader import Gene2GoReader
-objanno_hsa = Gene2GoReader(filename='../data/ncbigene/gene2go', taxids=[9606]) #taxids for human
+objanno_hsa = Gene2GoReader(filename='data/input/ncbigene/gene2go', taxids=[9606]) #taxids for human
 ns2assc_hsa1 = objanno_hsa.get_ns2assc()
 
 gene_go_associations = []
@@ -22,4 +22,4 @@ for gene, goterms in ns2assc_hsa1['CC'].items():
         
 gene_go_associations = pd.DataFrame(gene_go_associations, columns=['ncbi_gene_id', 'go_term_id', 'go_term_type'])
 gene_go_associations.loc[:, 'go_term_id'] = [str(int(x.split(':')[1])) for x in gene_go_associations.get(['go_term_id']).values.reshape(-1)]
-gene_go_associations.to_csv('../data/ncbigene/protein_go_associations.csv', index=False)
+gene_go_associations.to_csv('data/output/ncbigene/protein_go_associations.csv', index=False)

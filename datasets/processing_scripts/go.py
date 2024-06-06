@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 from goatools.obo_parser import GODag
-godag = GODag("../data/go/go-basic.obo")
+godag = GODag("data/input/go/go-basic.obo")
 
 all_go_terms = set()
 for k,v in godag.items(): 
@@ -23,5 +23,5 @@ all_go_terms.loc[:, 'go_term_id'] = [str(int(x.split(':')[1])) for x in all_go_t
 edges.loc[:, 'x'] = [str(int(x.split(':')[1])) for x in edges.get(['x']).values.reshape(-1)]
 edges.loc[:, 'y'] = [str(int(x.split(':')[1])) for x in edges.get(['y']).values.reshape(-1)]
 
-all_go_terms.to_csv('../data/go/go_terms_info.csv', index=False)
-edges.to_csv('../data/go/go_terms_relations.csv', index=False)
+all_go_terms.to_csv('data/output/go/go_terms_info.csv', index=False)
+edges.to_csv('data/output/go/go_terms_relations.csv', index=False)

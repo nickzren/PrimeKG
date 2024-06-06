@@ -89,6 +89,22 @@ class OBOReader(object):
         if rec_curr is not None:
             self._add_to_ref(rec_curr, line)
         else:
+            try:
+                self._add_to_typedef_with_duplicate_handling(typedef_curr, line)
+            except AssertionError as e:
+                print(f"AssertionError: {e} on line: {line}")
+                raise
+
+    def _add_to_typedef_with_duplicate_handling(self, typedef_curr, line):
+        """Add information to Typedef with duplicate handling."""
+        if line.startswith("id:"):
+            typedef_curr.item_id = line.split(": ")[1]
+        elif line.startswith("name:"):
+            if typedef_curr.name:
+                typedef_curr.name += f" (duplicate {line.split(': ')[1]})"
+            else:
+                typedef_curr.name = line.split(": ")[1]
+        else:
             add_to_typedef(typedef_curr, line)
 
     def _init_obo_version(self, line):
@@ -98,15 +114,8 @@ class OBOReader(object):
         if line[0:12] == "data-version":
             self.data_version = line[14:-1]
 
-    def _add_to_ref(self, rec_curr, line):        
-        
+    def _add_to_ref(self, rec_curr, line):
         """Add new fields to the current reference."""
-        # Examples of record lines containing ':' include:
-        #   id: GO:0000002
-        #   name: mitochondrial genome maintenance
-        #   namespace: biological_process
-        #   def: "The maintenance of ...
-        #   is_a: GO:0007005 ! mitochondrion organization
         l = len('MONDO:')
         if line[:4] == "id: ":
             assert not rec_curr.item_id
@@ -116,50 +125,46 @@ class OBOReader(object):
         elif line[:8] == "alt_id: ":
             rec_curr.alt_ids.add(line[8+l:])
         elif line[:6] == "name: ":
-            assert not rec_curr.name
-            rec_curr.name = line[6:]
-        elif line[:5] == "def: ": 
+            if rec_curr.name:
+                rec_curr.name += f" (duplicate {line[6:]})"
+            else:
+                rec_curr.name = line[6:]
+        elif line[:5] == "def: ":
             rec_curr.definition = line[5:]
-        #elif line[:11] == "namespace: ":
-        #    assert not rec_curr.namespace
-        #    rec_curr.namespace = line[11:]
         elif line[:6] == "is_a: ":
             rec_curr._parents.add(line[6+l:].split()[0])
-        elif line[:8] == "subset: ": 
+        elif line[:8] == "subset: ":
             rec_curr.subsets.add(line[8:].split()[0])
-        elif line[:6] =='xref: ': 
+        elif line[:6] == 'xref: ':
             if line[:10] != 'xref: url:':
                 rec_curr.xrefs.add(line[6:].split()[0])
-        elif 'closeMatch' in line: 
-            if 'umls' in line: 
+        elif 'closeMatch' in line:
+            ref = None
+            if 'umls' in line:
                 ref = 'UMLS:'+line.split('/')[-1]
-            elif 'snomedct' in line: 
+            elif 'snomedct' in line:
                 ref = 'SCTID:'+line.split('/')[-1]
-            elif 'mesh' in line: 
+            elif 'mesh' in line:
                 ref = 'MESH:'+line.split('/')[-1]
-            elif 'medgen' in line: 
+            elif 'medgen' in line:
                 ref = 'MEDGEN:'+line.split('/')[-1]
-            elif 'meddra' in line: 
+            elif 'meddra' in line:
                 ref = 'MedDRA:'+line.split('/')[-1]
-            elif 'omim' in line: 
+            elif 'omim' in line:
                 ref = 'OMIM:'+line.split('/')[-1]
-            elif 'DOID' in line: 
+            elif 'DOID' in line:
                 ref = 'DOID:'+line.split(':')[-1]
-            elif 'NCIT' in line: 
+            elif 'NCIT' in line:
                 ref = 'NCIT:'+line.split(':')[-1]
-            elif 'Orphanet' in line: 
+            elif 'Orphanet' in line:
                 ref = 'Orphanet:'+line.split(':')[-1]
             else:
                 print('closeMatch not added for:', line)
-                ref=None
-            rec_curr.xrefs.add(ref)
-        #elif line[:9] =='synonym: ': 
-       #     rel, name = line[9:].split()[-2:]
-       #     name = name[1:-1]
-       #     rec_curr.synonyms.add((name,rel))            
+            if ref:
+                rec_curr.xrefs.add(ref)
         elif line[:13] == "is_obsolete: " and line[13:] == "true":
             rec_curr.is_obsolete = True
-        elif line[:13] == "replaced_by: ": 
+        elif line[:13] == "replaced_by: ":
             rec_curr.replaced_by = line[13+l:]
         elif self.optobj and ':' in line:
             self.optobj.update_rec(rec_curr, line)

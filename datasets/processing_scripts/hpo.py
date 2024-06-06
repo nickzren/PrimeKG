@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from hpo_obo_parser import OBOReader
 
-pth = "../data/hpo/hp.obo"
+pth = "data/input/hpo/hp.obo"
 data = [*iter(OBOReader(pth))]
 hp_terms = pd.DataFrame([{'id':x.item_id, 
                              'name':x.name, 
@@ -33,6 +33,6 @@ print('references to the following ontologies are available:')
 print(np.unique(hp_xrefs.get('ontology').values))
 print('references from hp to hp indicate equivalence/synonyms')
 
-hp_terms.to_csv('../data/hpo/hp_terms.csv', index=False)
-hp_parents.to_csv('../data/hpo/hp_parents.csv', index=False)
-hp_xrefs.to_csv('../data/hpo/hp_references.csv', index=False)
+hp_terms.to_csv('data/output/hpo/hp_terms.csv', index=False)
+hp_parents.to_csv('data/output/hpo/hp_parents.csv', index=False)
+hp_xrefs.to_csv('data/output/hpo/hp_references.csv', index=False)

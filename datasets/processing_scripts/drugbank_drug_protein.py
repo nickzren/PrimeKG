@@ -1,57 +1,52 @@
-import numpy as np
+import os
 import pandas as pd
 
-df_carrier = pd.read_csv('../data/drugbank/drugbank_all_carrier_polypeptide_ids.csv/all.csv').query('Species=="Humans"')
-df_enzyme = pd.read_csv('../data/drugbank/drugbank_all_enzyme_polypeptide_ids.csv/all.csv').query('Species=="Humans"')
-df_target = pd.read_csv('../data/drugbank/drugbank_all_target_polypeptide_ids.csv/all.csv').query('Species=="Humans"')
-df_transporter = pd.read_csv('../data/drugbank/drugbank_all_transporter_polypeptide_ids.csv/all.csv').query('Species=="Humans"')
+# Constants
+OUTPUT_DIR = 'data/output/drugbank/'
 
-gene_vocab = pd.read_csv('../data/vocab/gene_map.csv', delimiter='\t')
-db_vocab = pd.read_csv('../data/vocab/drugbank_vocabulary.csv')
+# Ensure the output directory exists
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-up2ncbi = gene_vocab.get(['NCBI Gene ID(supplied by NCBI)', 'UniProt ID(supplied by UniProt)']).dropna().set_index('UniProt ID(supplied by UniProt)').to_dict()['NCBI Gene ID(supplied by NCBI)']
-ncbi2up = gene_vocab.get(['NCBI Gene ID(supplied by NCBI)', 'UniProt ID(supplied by UniProt)']).dropna().set_index('NCBI Gene ID(supplied by NCBI)').to_dict()['UniProt ID(supplied by UniProt)']
-dbid2name = db_vocab.get(['DrugBank ID', 'Common name']).dropna().set_index('DrugBank ID').to_dict()['Common name']
+# Load the drug bonds and drug vocabulary data
+df_bonds = pd.read_csv(os.path.join(OUTPUT_DIR, 'drug_bonds.tsv'), sep='\t')
+df_vocab = pd.read_csv(os.path.join(OUTPUT_DIR, 'drugbank_vocabulary.tsv'), sep='\t')
+gene_vocab = pd.read_csv('data/input/vocab/gene_map.csv', delimiter='\t')
 
-def add_col(df, dct, source, sink):
-    missing = set()
-    df[sink] = ''
-    for idx, data in df.iterrows(): 
-        if data[source] in dct: 
-            df.at[idx,sink] = dct[data[source]]
-        else: 
-            df.at[idx,sink] = float("nan")
-            missing.add(data[source])
-    #print('missing: {}'.format(len(missing)))
+# Create dictionaries for mapping
+up2ncbi = gene_vocab.set_index('UniProt ID(supplied by UniProt)')['NCBI Gene ID(supplied by NCBI)'].to_dict()
+dbid2name = df_vocab.set_index('drugbank_id')['name'].to_dict()
+
+def add_col(df, dct, source, sink, dtype=None):
+    df[sink] = df[source].map(dct).fillna(float("nan"))
+    if dtype:
+        df[sink] = df[sink].astype(dtype)
     return df
 
-df_carrier = add_col(df_carrier, up2ncbi, 'UniProt ID', 'NCBIGeneID')
-df_enzyme = add_col(df_enzyme, up2ncbi, 'UniProt ID', 'NCBIGeneID')
-df_target = add_col(df_target, up2ncbi, 'UniProt ID', 'NCBIGeneID')
-df_transporter = add_col(df_transporter, up2ncbi, 'UniProt ID', 'NCBIGeneID')
+df_bonds = add_col(df_bonds, up2ncbi, 'uniprot_id', 'NCBIGeneID', 'Int64')
 
-def drugbank2edges(df, relation): 
+def drugbank2edges(df, relation):
     db = []
-    for idx, data in df.iterrows(): 
+    for _, data in df.iterrows():
         drugs = data['Drug IDs'].split('; ')
-        for drug in drugs: 
+        for drug in drugs:
             info = {
-                'DrugBank':drug, 'relation':relation,
-                'NCBIGeneID':data['NCBIGeneID'],
-                'UniProtName':data['Name'],
-                'UniProtID': data['UniProt ID'], 
+                'DrugBank': drug,
+                'relation': relation,
+                'NCBIGeneID': data['NCBIGeneID'],
+                'UniProtName': data['name'],
+                'UniProtID': data['uniprot_id'],
             }
             db.append(info)
     return db
 
 db = []
-db.extend(drugbank2edges(df_carrier, 'carrier'))
-db.extend(drugbank2edges(df_enzyme, 'enzyme'))
-db.extend(drugbank2edges(df_target, 'target'))
-db.extend(drugbank2edges(df_transporter, 'transporter'))
+for bond_type in ['carrier', 'enzyme', 'target', 'transporter']:
+    df_bond_type = df_bonds[df_bonds['bond_type'].str.lower().str.contains(bond_type)]
+    db.extend(drugbank2edges(df_bond_type, bond_type))
+
 df_prot_drug = pd.DataFrame(db)
 df_prot_drug = add_col(df_prot_drug, dbid2name, 'DrugBank', 'DrugBankName')
 
-df_prot_drug.to_csv('../data/drugbank/drug_protein.csv', index=False)
+df_prot_drug.to_csv(os.path.join(OUTPUT_DIR, 'drug_protein.tsv'), sep='\t', index=False)
 
-
+print("Data saved to data/output/drugbank/drug_protein.tsv")
