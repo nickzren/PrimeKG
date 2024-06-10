@@ -80,7 +80,7 @@ queries = {
         JOIN db.categories c ON dc.category_id = c.id
         JOIN db.drugs d ON dc.drug_id = d.id
     """,
-    "atc_codes": """
+    "drug_atc_codes": """
         SELECT DISTINCT d.drugbank_id AS ID, 
             STRING_AGG(DISTINCT CASE WHEN cm.vocabulary_level = 1 THEN cm.title ELSE NULL END, '|') AS Level1,
             STRING_AGG(DISTINCT CASE WHEN cm.vocabulary_level = 2 THEN cm.title ELSE NULL END, '|') AS Level2,
@@ -130,6 +130,24 @@ queries = {
     """,
     "drugs": """
         SELECT drugbank_id AS ID, type AS drug_type, cas_number FROM db.drugs
+    """,
+    "drug_drug": """
+        SELECT
+            d1.drugbank_id AS drug1,
+            d2.drugbank_id AS drug2
+        FROM
+            db.drug_interactions di
+        JOIN
+            db.drugs d1 ON di.subject_drug_id = d1.id
+        JOIN
+            db.drugs d2 ON di.affected_drug_id = d2.id
+    """,
+    "drugbank_atc_codes": """
+        SELECT DISTINCT cm.code as atc_code, d.drugbank_id as parent_key
+        FROM db.drugs d
+        LEFT JOIN db.drug_categorizations dc ON dc.drug_id = d.id
+        LEFT JOIN db.category_mappings cm ON cm.category_id = dc.category_id
+        WHERE cm.vocabulary = 'ATC';
     """
 }
 

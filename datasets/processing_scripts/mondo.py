@@ -20,6 +20,8 @@ for x in data:
         for parent in x._parents: 
             mondo_parents.append({'parent':parent, 'child':x.item_id})           
 mondo_parents = pd.DataFrame(mondo_parents).drop_duplicates()
+mondo_parents['parent'] = mondo_parents['parent'].str.replace(':', '')
+mondo_parents['child'] = mondo_parents['child'].str.replace(':', '')
 
 print("cross references from mondo to other ontologies")
 mondo_xrefs = []

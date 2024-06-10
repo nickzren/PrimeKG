@@ -7,6 +7,14 @@ dependencies:
   - numpy
   - pandas
   - goatools
-  - bs4
+  - beautifulsoup4
   - psycopg2
   - sqlalchemy
+  - tqdm
+  - python-igraph
+  - scipy
+  - scikit-learn
+  - cudatoolkit
+  - pip:
+    - torch
+    - transformers
