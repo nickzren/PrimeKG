@@ -1,23 +1,12 @@
 import os
 import pandas as pd
 import numpy as np
-from tqdm.notebook import tqdm
-import re
-import shutil
 import igraph as ig
-from scipy.sparse import lil_matrix, save_npz
-from sklearn.metrics.pairwise import cosine_similarity
-import torch
-from transformers import AutoTokenizer, AutoModel, pipeline
-import json
 
 # Constants
 INPUT = 'data/input/'
 OUTPUT = 'data/output/'
 SAVE_PATH = OUTPUT + 'kg/'
-
-# Ensure the save directory exists
-os.makedirs(SAVE_PATH, exist_ok=True)
 
 def assert_dtypes(df): 
     all_string = True
@@ -187,7 +176,6 @@ df_drug_dis['display_relation'] = df_drug_dis.get('relation').values
 df_drug_dis = clean_edges(df_drug_dis)
 print(df_drug_dis.head(1))
 
-
 ### Disease protein interactions (DisGenNet)
 
 df_prot_dis1 = df_disgenet.query('diseaseType=="disease"')
@@ -205,7 +193,6 @@ df_prot_dis1['display_relation'] = 'associated with'
 df_prot_dis1 = clean_edges(df_prot_dis1)
 print(df_prot_dis1.head(1))
 
-
 # Disease disease interations
 
 df_dis_dis1 = pd.merge(df_mondo_parents, df_mondo_terms, 'left', left_on='parent', right_on='id')
@@ -221,7 +208,6 @@ df_dis_dis1['display_relation'] = 'parent-child'
 df_dis_dis1 = clean_edges(df_dis_dis1)
 print(df_dis_dis1.head(1))
 
-
 # Drug drug interactions (DrugBank)
 
 df_drug_drug = pd.merge(df_ddi, db_vocab, 'inner', left_on='drug1', right_on='drugbank_id')
@@ -236,7 +222,6 @@ df_drug_drug['relation'] = 'drug_drug'
 df_drug_drug['display_relation'] = 'synergistic interaction'
 df_drug_drug = clean_edges(df_drug_drug)
 print(df_drug_drug.head(1))
-
 
 # EFFECT / Phenotype 
 ### Effect protein interactions (DisGenNet)
@@ -256,7 +241,6 @@ df_prot_phe['display_relation'] = 'associated with'
 df_prot_phe = clean_edges(df_prot_phe)
 print(df_prot_phe.head(1))
 
-
 ### Effect effect interactions (HPO)
 
 df_phe_phe = pd.merge(df_hp_parents, df_hp_terms, 'left', left_on='parent', right_on='id')
@@ -274,7 +258,6 @@ df_phe_phe['relation'] = 'phenotype_phenotype'
 df_phe_phe['display_relation'] = 'parent-child'
 df_phe_phe = clean_edges(df_phe_phe)
 print(df_phe_phe.head(1))
-
 
 ### Disease effect interactions (HPO-A)
 
@@ -308,7 +291,6 @@ df_dis_phe_neg.loc[:, 'display_relation'] = 'phenotype absent'
 df_dis_phe_neg = clean_edges(df_dis_phe_neg)
 print(df_dis_phe_neg.head(1))
 
-
 ### Remove phenotype nodes if they exist in MONDO
 
 # phenotypes that are actually diseases in MONDO
@@ -327,7 +309,6 @@ def replace_hp_data_w_mondo(df, hp_id_col, drop_cols=[]):
     return df
 
 # HANDLE EFFECT EFFECT 
-
 # PHE-PHE should be PHE-DIS if ONE PHE is in MONDO
 
 df_dis_phe_x = df_phe_phe.query('x_id in @hp_ids_r_mondo and y_id not in @hp_ids_r_mondo')
@@ -348,7 +329,6 @@ df_dis_phe_pos2 = pd.concat([df_dis_phe_x, df_dis_phe_y], ignore_index=True)
 df_dis_phe_pos2['relation'] = 'disease_phenotype_positive'
 df_dis_phe_pos2.loc[:, 'display_relation'] = 'phenotype present'
 df_dis_phe_pos2 = clean_edges(df_dis_phe_pos2)
-
 
 # PHE-PHE should be DIS-DIS if BOTH PHE are in MONDO
 
@@ -403,7 +383,6 @@ df_prot_dis = pd.concat([df_prot_dis1, df_prot_dis2], ignore_index=True).drop_du
 df_dis_dis = pd.concat([df_dis_dis1, df_dis_dis2], ignore_index=True).drop_duplicates()
 df_dis_phe_pos = pd.concat([df_dis_phe_pos1, df_dis_phe_pos2], ignore_index=True).drop_duplicates()
 
-
 ### Drug effect interactions (SIDER)
 
 df_drug_effect = pd.merge(df_sider, df_db_atc, 'left', left_on='atc', right_on='atc_code')
@@ -425,9 +404,7 @@ df_drug_effect = df_drug_effect.query('y_id not in @hp_ids_r_mondo')
 df_drug_effect = clean_edges(df_drug_effect)
 print(df_drug_effect.head(1))
 
-
 ## GO Terms
-
 ### Go terms interactions (GO)
 
 bp = df_go_terms.query('go_term_type=="biological_process"')
@@ -441,7 +418,6 @@ df_bp_bp['y_source'] = 'GO'
 df_bp_bp['display_relation'] = 'parent-child'
 df_bp_bp = clean_edges(df_bp_bp)
 print(df_bp_bp.head(1))
-
 
 mf = df_go_terms.query('go_term_type=="molecular_function"')
 df_mf_mf = pd.merge(df_go_edges, mf, 'inner', left_on='x', right_on='go_term_id')
@@ -466,7 +442,6 @@ df_cc_cc['x_source'] = 'GO'
 df_cc_cc['y_source'] = 'GO'
 df_cc_cc = clean_edges(df_cc_cc)
 print(df_cc_cc.head(1))
-
 
 ### Go protein interactions (Gene2GO)
 
@@ -497,9 +472,7 @@ df_prot_bp['display_relation'] = 'interacts with'
 df_prot_bp = clean_edges(df_prot_bp)
 print(df_prot_bp.head(1))
 
-
 ## Exposure
-
 ### Exposure protein interactions (CTD)
 
 df_exp_prot = df_exposures.get(['exposurestressorname', 'exposurestressorid','exposuremarker', 'exposuremarkerid'])
@@ -559,9 +532,7 @@ df_exp_exp['display_relation'] = 'parent-child'
 df_exp_exp = clean_edges(df_exp_exp)
 print(df_exp_exp.head(1))
 
-
 ### Exposure pathway interactions (CTD)
-
 # phenotypes are actually pathways 
 
 df_exp_path = df_exposures.get(['exposurestressorname', 'exposurestressorid','phenotypename', 'phenotypeid'])
@@ -593,9 +564,7 @@ df_exp_cc['display_relation'] = 'interacts with'
 df_exp_cc = clean_edges(df_exp_cc)
 print(df_exp_cc.head(1))
 
-
 ## Anatomy
-
 ### Anatomy anatomy interactions (UBERON) 
 
 df_ana_ana = pd.merge(df_uberon_is_a, df_uberon_terms, 'left', left_on='id', right_on='id')
@@ -633,7 +602,6 @@ df_ana_prot_neg['display_relation'] = 'expression absent'
 df_ana_prot_neg = clean_edges(df_ana_prot_neg)
 print(df_ana_prot_neg.head(1))
 
-
 ## Pathways
 
 df_path_path = pd.merge(df_reactome_rels, df_reactome_terms, 'inner', left_on='reactome_id_1', right_on='reactome_id')
@@ -665,7 +633,6 @@ df_path_prot['display_relation'] = 'interacts with'
 df_path_prot = clean_edges(df_path_prot)
 print(df_path_prot.head(1))
 
-
 # Compiling knowledge graph
 
 kg = pd.concat([df_prot_drug, df_drug_dis, df_drug_drug, df_prot_phe,
@@ -685,7 +652,6 @@ kg = kg.query('not ((x_id == y_id) and (x_type == y_type) and (x_source == y_sou
 print(kg.head())
 
 kg.to_csv(SAVE_PATH+'kg_raw.csv', index=False)
-
 
 # Get giant component
 
@@ -732,93 +698,3 @@ new_kg = clean_edges(new_kg)
 
 kg = new_kg.copy()
 kg.to_csv(SAVE_PATH+'kg_giant.csv', index=False)
-
-
-# Collapse similar diseases
-## Find Groups
-### Automated grouping
-
-# kg = pd.read_csv(SAVE_PATH+'kg_giant.csv', low_memory=False)
-
-disease_nodes = pd.concat([kg.get(['x_id','x_type', 'x_name','x_source']).rename(columns={'x_id':'node_id', 'x_type':'node_type', 'x_name':'node_name','x_source':'node_source'}), 
-                   kg.get(['y_id','y_type', 'y_name','y_source']).rename(columns={'y_id':'node_id', 'y_type':'node_type', 'y_name':'node_name','y_source':'node_source'})])
-disease_nodes = disease_nodes.query('node_type=="disease"')
-disease_nodes = disease_nodes.drop_duplicates().reset_index().drop('index',axis=1).reset_index().rename(columns={'index':'node_idx'})
-
-groups = []
-seen = set()
-idx2group = {}
-no = set()
-
-
-def isroman(s):
-    return bool(re.search(r"^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$",s))
-
-
-def issingleletter(s): 
-    if len(s)>1: return False
-
-
-def same_words(s1, s2): 
-    for word in s1.lower().split(' '): 
-        word = word.split(',')[0]
-        if word!='type' and word!='(disease)' and word not in s2.lower(): 
-            return False 
-    for word in s2.lower().split(' '): 
-        word = word.split(',')[0]
-        if word!='type' and word!='(disease)' and word not in s1.lower(): 
-            return False
-    return True
-
-
-for i in range(disease_nodes.shape[0]):
-    i_name = disease_nodes.loc[i, 'node_name']
-    i_idx = disease_nodes.loc[i, 'node_idx']
-    for w in ['monosomy','disomy', 'trisomy', 'trisomy/tetrasomy', 'chromosome']: 
-        if w in i_name: 
-            no.add(i_idx)
-
-
-for i in range(disease_nodes.shape[0]):
-    i_idx = disease_nodes.loc[i, 'node_idx']
-    if i_idx in seen: continue 
-    if i_idx in no: continue 
-    i_name = disease_nodes.loc[i, 'node_name']
-    i_split = i_name.split(' ')
-    end = i_split[-1]
-    if len(end)<=2 or end.isnumeric() or isroman(end):  
-        main_text = ' '.join(i_split[:-1])
-        matches = [i_name]
-        matches_idx = [i_idx]
-        match_found = False
-        numeric = True
-        for j in range(disease_nodes.shape[0]):
-            j_idx = disease_nodes.loc[j, 'node_idx']
-            j_name = disease_nodes.loc[j, 'node_name']
-            m = ' '.join(j_name.split(' ')[:-1])
-            if m.lower() == main_text.lower() or same_words(m, main_text): 
-                matches.append(j_name)
-                matches_idx.append(j_idx)
-                match_found = True
-        if match_found:
-            matches_idx = list(set(matches_idx))
-            matches = list(set(matches))
-            if len(matches) <= 1: continue 
-            if main_text.endswith('type'): 
-                main_text = main_text[:-4]
-            if main_text.endswith(','): 
-                main_text = main_text[:-1]
-            if main_text.endswith(' '): 
-                main_text = main_text[:-1]
-            # print(main_text)
-            # for x in sorted(matches): 
-            #     print('-  ',x)
-            for x in matches_idx: 
-                seen.add(x)
-                idx2group[int(x)] = main_text
-            # groups.append((main_text, matches_idx))
-
-
-# Output idx2group to txt file
-with open(SAVE_PATH + 'idx2group.txt', 'w') as f:
-    json.dump(idx2group, f, ensure_ascii=False, indent=4)

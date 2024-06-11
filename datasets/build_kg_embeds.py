@@ -1,12 +1,10 @@
 import os
 import torch
-from transformers import AutoTokenizer, AutoModel, pipeline
+from transformers import AutoTokenizer, AutoModel
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import shutil
-from scipy.sparse import lil_matrix, save_npz
-from sklearn.metrics.pairwise import cosine_similarity
 import json
 
 # Constants
@@ -40,7 +38,6 @@ disease_group_1.to_csv(SAVE_PATH + 'disease_group_1.csv', index=False)
 disease_nodes = pd.merge(disease_nodes, disease_group_1, 'left', 'group_name')
 disease_nodes.to_csv(SAVE_PATH + 'disease_nodes.csv', index=False)
 
-
 input_text = list(disease_group_1.get('group_name').values)
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -49,8 +46,6 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModel.from_pretrained(model_name)
 model = model.to(device)
 model.eval()
-
-print("Model set to evaluation mode")
 
 def batch(iterable, batch_size=4, return_idx=True):
     l = len(iterable)
