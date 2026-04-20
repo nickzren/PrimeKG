@@ -5,7 +5,7 @@ bcrypt @ file:///Users/builder/ci_310/bcrypt_1642543383457/work
 beautifulsoup4 @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_croot-cdiouih5/beautifulsoup4_1650462164803/work
 Bottleneck @ file:///opt/concourse/worker/volumes/live/f7139d11-2eee-4f6e-48cd-73168dc9e900/volume/bottleneck_1648028909796/work
 brotlipy==0.7.0
-certifi==2023.7.22
+certifi==2024.7.4
 cffi @ file:///Users/builder/ci_310/cffi_1643393868399/work
 charset-normalizer @ file:///tmp/build/80754af9/charset-normalizer_1630003229654/work
 click @ file:///opt/concourse/worker/volumes/live/2d66025a-4d79-47c4-43be-6220928b6c82/volume/click_1646056610594/work
@@ -41,7 +41,7 @@ packaging @ file:///tmp/build/80754af9/packaging_1637314298585/work
 pandas==1.4.2
 parsel @ file:///opt/concourse/worker/volumes/live/3047b519-0844-41b9-414f-b8d11ceffa6b/volume/parsel_1646739989150/work
 patsy==0.5.2
-Pillow==10.3.0
+Pillow==12.2.0
 Protego @ file:///tmp/build/80754af9/protego_1598657180827/work
 protobuf==5.29.6
 pyasn1 @ file:///Users/ktietz/demo/mc3/conda-bld/pyasn1_1629708007385/work

@@ -5,7 +5,7 @@ bcrypt
 beautifulsoup4
 Bottleneck
 brotlipy==0.7.0
-certifi==2023.7.22
+certifi==2024.7.4
 cffi
 charset-normalizer 
 click
@@ -41,7 +41,7 @@ packaging
 pandas==1.4.2
 parsel
 patsy==0.5.2
-Pillow==10.3.0
+Pillow==12.2.0
 Protego
 protobuf==5.29.6
 pyasn1
