@@ -5,7 +5,7 @@ bcrypt @ file:///Users/builder/ci_310/bcrypt_1642543383457/work
 beautifulsoup4 @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_croot-cdiouih5/beautifulsoup4_1650462164803/work
 Bottleneck @ file:///opt/concourse/worker/volumes/live/f7139d11-2eee-4f6e-48cd-73168dc9e900/volume/bottleneck_1648028909796/work
 brotlipy==0.7.0
-certifi==2020.6.20
+certifi==2023.7.22
 cffi @ file:///Users/builder/ci_310/cffi_1643393868399/work
 charset-normalizer @ file:///tmp/build/80754af9/charset-normalizer_1630003229654/work
 click @ file:///opt/concourse/worker/volumes/live/2d66025a-4d79-47c4-43be-6220928b6c82/volume/click_1646056610594/work
@@ -41,9 +41,9 @@ packaging @ file:///tmp/build/80754af9/packaging_1637314298585/work
 pandas==1.4.2
 parsel @ file:///opt/concourse/worker/volumes/live/3047b519-0844-41b9-414f-b8d11ceffa6b/volume/parsel_1646739989150/work
 patsy==0.5.2
-Pillow==9.0.1
+Pillow==10.3.0
 Protego @ file:///tmp/build/80754af9/protego_1598657180827/work
-protobuf==3.19.1
+protobuf==5.29.6
 pyasn1 @ file:///Users/ktietz/demo/mc3/conda-bld/pyasn1_1629708007385/work
 pyasn1-modules==0.2.8
 pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
@@ -74,12 +74,12 @@ texttable==1.6.4
 threadpoolctl @ file:///Users/ktietz/demo/mc3/conda-bld/threadpoolctl_1629802263681/work
 tldextract @ file:///opt/conda/conda-bld/tldextract_1646638314385/work
 tokenizers @ file:///Users/builder/ci_310/tokenizers_1642538207754/work
-torch==1.11.0
-torchaudio==0.11.0
-torchvision==0.12.0
+torch==2.8.0
+torchaudio==2.8.0
+torchvision==0.23.0
 tornado @ file:///Users/builder/ci_310/tornado_1642538510757/work
 tqdm @ file:///opt/conda/conda-bld/tqdm_1647339053476/work
-transformers==4.11.3
+transformers==5.0.0rc3
 Twisted @ file:///opt/concourse/worker/volumes/live/2c4ccb7b-0d3a-4d59-73e9-ec8e6bd97618/volume/twisted_1646835240498/work
 typing_extensions @ file:///opt/conda/conda-bld/typing_extensions_1647553014482/work
 urllib3 @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_0b00bbfb-4d57-4b5b-af70-5677ec53f4ac495c5h1w/croots/recipe/urllib3_1650637219008/work
