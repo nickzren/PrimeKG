@@ -74,9 +74,9 @@ texttable==1.6.4
 threadpoolctl
 tldextract
 tokenizers
-torch==2.11.0
+torch==2.12.1
 torchaudio==2.11.0
-torchvision==0.26.0
+torchvision==0.27.1
 tornado
 tqdm
 transformers==5.0.0rc3
