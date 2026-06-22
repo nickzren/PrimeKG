@@ -74,9 +74,9 @@ texttable==1.6.4
 threadpoolctl @ file:///Users/ktietz/demo/mc3/conda-bld/threadpoolctl_1629802263681/work
 tldextract @ file:///opt/conda/conda-bld/tldextract_1646638314385/work
 tokenizers @ file:///Users/builder/ci_310/tokenizers_1642538207754/work
-torch==2.11.0
+torch==2.12.1
 torchaudio==2.11.0
-torchvision==0.26.0
+torchvision==0.27.1
 tornado @ file:///Users/builder/ci_310/tornado_1642538510757/work
 tqdm @ file:///opt/conda/conda-bld/tqdm_1647339053476/work
 transformers==5.0.0rc3
