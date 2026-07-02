@@ -79,7 +79,7 @@ torchaudio==2.11.0
 torchvision==0.27.1
 tornado @ file:///Users/builder/ci_310/tornado_1642538510757/work
 tqdm @ file:///opt/conda/conda-bld/tqdm_1647339053476/work
-transformers==5.0.0rc3
+transformers==5.3.0
 Twisted @ file:///opt/concourse/worker/volumes/live/2c4ccb7b-0d3a-4d59-73e9-ec8e6bd97618/volume/twisted_1646835240498/work
 typing_extensions @ file:///opt/conda/conda-bld/typing_extensions_1647553014482/work
 urllib3 @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_0b00bbfb-4d57-4b5b-af70-5677ec53f4ac495c5h1w/croots/recipe/urllib3_1650637219008/work
