@@ -41,7 +41,7 @@ packaging
 pandas==1.4.2
 parsel
 patsy==0.5.2
-Pillow==12.2.0
+Pillow==12.3.0
 Protego
 protobuf==5.29.6
 pyasn1

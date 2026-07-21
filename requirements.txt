@@ -41,7 +41,7 @@ packaging @ file:///tmp/build/80754af9/packaging_1637314298585/work
 pandas==1.4.2
 parsel @ file:///opt/concourse/worker/volumes/live/3047b519-0844-41b9-414f-b8d11ceffa6b/volume/parsel_1646739989150/work
 patsy==0.5.2
-Pillow==12.2.0
+Pillow==12.3.0
 Protego @ file:///tmp/build/80754af9/protego_1598657180827/work
 protobuf==5.29.6
 pyasn1 @ file:///Users/ktietz/demo/mc3/conda-bld/pyasn1_1629708007385/work
