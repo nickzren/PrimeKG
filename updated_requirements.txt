@@ -79,7 +79,7 @@ torchaudio==2.11.0
 torchvision==0.28.0
 tornado
 tqdm
-transformers==5.5.0
+transformers==5.10.1
 Twisted
 typing_extensions
 urllib3
